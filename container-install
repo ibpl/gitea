@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+export DEBIAN_FRONTEND='noninteractive'
+export GOPATH="/:/usr/share/gocode"
+
+/bin/echo -e '#!/bin/sh\nexit 101' | install -m 755 /dev/stdin /usr/sbin/policy-rc.d
+apt-get update && apt-get install -y --no-install-recommends build-essential golang golang-golang-x-sys-dev nodejs npm
+npm install npm@latest -g
+
+cd /src/dev.ib.loc/ib/gitea
+git checkout --quiet 'release/v1.12-ib'
+TAGS="bindata" make build
+cp -a gitea /container-root/usr/local/bin/gitea
+
+exit 0
