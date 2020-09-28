@@ -71,8 +71,10 @@ func (r *ReverseProxy) VerifyAuthData(ctx *macaron.Context, sess session.Store) 
 	if err != nil {
 		if models.IsErrUserNotExist(err) && r.isAutoRegisterAllowed() {
 			return r.newUser(ctx)
+		} else if user, err = models.UserSignIn(username, "", true); err == nil {
+			return user
 		}
-		log.Error("GetUserByName: %v", err)
+		log.Error("UserSignIn: %v", err)
 		return nil
 	}
 
