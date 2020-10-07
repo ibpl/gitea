@@ -34,6 +34,7 @@ const (
 func Profile(ctx *context.Context) {
 	ctx.Data["Title"] = ctx.Tr("settings")
 	ctx.Data["PageIsSettingsProfile"] = true
+	ctx.Data["DisableLocalUserManagement"] = setting.Service.DisableLocalUserManagement
 
 	ctx.HTML(200, tplSettingsProfile)
 }
@@ -46,6 +47,9 @@ func handleUsernameChange(ctx *context.Context, newName string) {
 
 	// Check if user name has been changed
 	if ctx.User.LowerName != strings.ToLower(newName) {
+		if setting.Service.DisableLocalUserManagement {
+			ctx.ServerError("ChangeUserName", fmt.Errorf("cannot change user %s username; local user management disabled", ctx.User.Name))
+		}
 		if err := models.ChangeUserName(ctx.User, newName); err != nil {
 			switch {
 			case models.IsErrUserAlreadyExist(err):
@@ -80,6 +84,7 @@ func handleUsernameChange(ctx *context.Context, newName string) {
 func ProfilePost(ctx *context.Context, form auth.UpdateProfileForm) {
 	ctx.Data["Title"] = ctx.Tr("settings")
 	ctx.Data["PageIsSettingsProfile"] = true
+	ctx.Data["DisableLocalUserManagement"] = setting.Service.DisableLocalUserManagement
 
 	if ctx.HasError() {
 		ctx.HTML(200, tplSettingsProfile)
