@@ -1099,7 +1099,7 @@ func CreateRepository(ctx DBContext, doer, u *User, repo *Repository) (err error
 
 	// Remember visibility preference.
 	u.LastRepoVisibility = repo.IsPrivate
-	if err = updateUserCols(ctx.e, u, "last_repo_visibility"); err != nil {
+	if err = updateUserCols(ctx.e, u, false, "last_repo_visibility"); err != nil {
 		return fmt.Errorf("updateUser: %v", err)
 	}
 

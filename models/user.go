@@ -219,13 +219,13 @@ func (u *User) SetLastLogin() {
 // UpdateDiffViewStyle updates the users diff view style
 func (u *User) UpdateDiffViewStyle(style string) error {
 	u.DiffViewStyle = style
-	return UpdateUserCols(u, "diff_view_style")
+	return UpdateUserCols(u, false, "diff_view_style")
 }
 
 // UpdateTheme updates a users' theme irrespective of the site wide theme
 func (u *User) UpdateTheme(themeName string) error {
 	u.Theme = themeName
-	return UpdateUserCols(u, "theme")
+	return UpdateUserCols(u, false, "theme")
 }
 
 // GetEmail returns an noreply email, if the user has set to keep his
@@ -823,7 +823,7 @@ func (u *User) EmailNotifications() string {
 // SetEmailNotifications sets the user's email notification preference
 func (u *User) SetEmailNotifications(set string) error {
 	u.EmailNotificationsPreference = set
-	if err := UpdateUserCols(u, "email_notifications_preference"); err != nil {
+	if err := UpdateUserCols(u, false, "email_notifications_preference"); err != nil {
 		log.Error("SetEmailNotifications: %v", err)
 		return err
 	}
@@ -1172,13 +1172,15 @@ func UpdateUser(u *User) error {
 }
 
 // UpdateUserCols update user according special columns
-func UpdateUserCols(u *User, cols ...string) error {
-	return updateUserCols(x, u, cols...)
+func UpdateUserCols(u *User, force bool, cols ...string) error {
+	return updateUserCols(x, u, force, cols...)
 }
 
-func updateUserCols(e Engine, u *User, cols ...string) error {
-	if err := updateUserAllowed(u); err != nil {
-		return err
+func updateUserCols(e Engine, u *User, force bool, cols ...string) error {
+	if !force {
+		if err := updateUserAllowed(u); err != nil {
+			return err
+		}
 	}
 	_, err := e.ID(u.ID).Cols(cols...).Update(u)
 	return err
@@ -2020,7 +2022,7 @@ func SyncExternalUsers(ctx context.Context, updateExisting bool) error {
 						}
 						usr.IsActive = true
 
-						err = UpdateUserCols(usr, "full_name", "email", "is_admin", "is_restricted", "is_active")
+						err = UpdateUserCols(usr, true, "full_name", "email", "is_admin", "is_restricted", "is_active")
 						if err != nil {
 							log.Error("SyncExternalUsers[%s]: Error updating user %s: %v", s.Name, usr.Name, err)
 						}
@@ -2057,7 +2059,7 @@ func SyncExternalUsers(ctx context.Context, updateExisting bool) error {
 						log.Trace("SyncExternalUsers[%s]: Deactivating user %s", s.Name, usr.Name)
 
 						usr.IsActive = false
-						err = UpdateUserCols(usr, "is_active")
+						err = UpdateUserCols(usr, true, "is_active")
 						if err != nil {
 							log.Error("SyncExternalUsers[%s]: Error deactivating user %s: %v", s.Name, usr.Name, err)
 						}
