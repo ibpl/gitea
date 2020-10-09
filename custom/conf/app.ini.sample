@@ -50,6 +50,8 @@ DISABLED_REPO_UNITS =
 DEFAULT_REPO_UNITS = repo.code,repo.releases,repo.issues,repo.pulls,repo.wiki
 ; Prefix archive files by placing them in a directory named after the repository
 PREFIX_ARCHIVE_FILES = true
+; Disable mirroring feature. Pre-existing mirrors remain valid but cannot be updated (may be converted to regular repo).
+DISABLE_MIRRORS = false
 ; The default branch name of new repositories
 DEFAULT_BRANCH=master
 
