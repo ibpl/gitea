@@ -52,6 +52,8 @@ DEFAULT_REPO_UNITS = repo.code,repo.releases,repo.issues,repo.pulls,repo.wiki
 PREFIX_ARCHIVE_FILES = true
 ; The default branch name of new repositories
 DEFAULT_BRANCH=master
+; Disable migrating feature.
+DISABLE_MIGRATIONS = true
 
 [repository.editor]
 ; List of file extensions for which lines should be wrapped in the Monaco editor

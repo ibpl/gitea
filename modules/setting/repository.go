@@ -40,6 +40,7 @@ var (
 		DisabledRepoUnits                       []string
 		DefaultRepoUnits                        []string
 		PrefixArchiveFiles                      bool
+		DisableMigrations                       bool
 		DefaultBranch                           string
 
 		// Repository editor settings
@@ -105,6 +106,7 @@ var (
 		DisabledRepoUnits:                       []string{},
 		DefaultRepoUnits:                        []string{},
 		PrefixArchiveFiles:                      true,
+		DisableMigrations:                       false,
 
 		// Repository editor settings
 		Editor: struct {

@@ -257,6 +257,11 @@ func CreatePost(ctx *context.Context, form auth.CreateRepoForm) {
 
 // Migrate render migration of repository page
 func Migrate(ctx *context.Context) {
+	if setting.Repository.DisableMigrations {
+		ctx.ServerError("MigratePost", fmt.Errorf("cannot migrate; migrations disabled"))
+		return
+	}
+
 	ctx.Data["Title"] = ctx.Tr("new_migrate")
 	ctx.Data["private"] = getRepoPrivate(ctx)
 	ctx.Data["IsForcedPrivate"] = setting.Repository.ForcePrivate
@@ -279,6 +284,11 @@ func Migrate(ctx *context.Context) {
 }
 
 func handleMigrateError(ctx *context.Context, owner *models.User, err error, name string, tpl base.TplName, form *auth.MigrateRepoForm) {
+	if setting.Repository.DisableMigrations {
+		ctx.ServerError("MigrateError", fmt.Errorf("migrations disabled"))
+		return
+	}
+
 	switch {
 	case migrations.IsRateLimitError(err):
 		ctx.RenderWithErr(ctx.Tr("form.visit_rate_limit"), tpl, form)
@@ -314,6 +324,11 @@ func handleMigrateError(ctx *context.Context, owner *models.User, err error, nam
 
 // MigratePost response for migrating from external git repository
 func MigratePost(ctx *context.Context, form auth.MigrateRepoForm) {
+	if setting.Repository.DisableMigrations {
+		ctx.ServerError("MigratePost", fmt.Errorf("cannot migrate; migrations disabled"))
+		return
+	}
+
 	ctx.Data["Title"] = ctx.Tr("new_migrate")
 
 	ctxUser := checkContextUser(ctx, form.UID)

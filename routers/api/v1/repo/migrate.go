@@ -113,6 +113,11 @@ func Migrate(ctx *context.APIContext, form auth.MigrateRepoForm) {
 		gitServiceType = api.GithubService
 	}
 
+    if setting.Repository.DisableMigrations {
+        ctx.Error(http.StatusForbidden, "MigrationsGlobalDisabled", fmt.Errorf("the site administrator has disabled migrations"))
+        return
+    }
+
 	var opts = migrations.MigrateOptions{
 		CloneAddr:      remoteAddr,
 		RepoName:       form.RepoName,
