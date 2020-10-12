@@ -203,6 +203,7 @@ func EditUser(ctx *context.Context) {
 	ctx.Data["PageIsAdminUsers"] = true
 	ctx.Data["DisableRegularOrgCreation"] = setting.Admin.DisableRegularOrgCreation
 	ctx.Data["DisableLocalUserManagement"] = setting.Service.DisableLocalUserManagement
+	ctx.Data["DisableMigrations"] = setting.Repository.DisableMigrations
 
 	prepareUserInfo(ctx)
 	if ctx.Written() {
@@ -218,6 +219,7 @@ func EditUserPost(ctx *context.Context, form auth.AdminEditUserForm) {
 	ctx.Data["PageIsAdmin"] = true
 	ctx.Data["PageIsAdminUsers"] = true
 	ctx.Data["DisableLocalUserManagement"] = setting.Service.DisableLocalUserManagement
+	ctx.Data["DisableMigrations"] = setting.Repository.DisableMigrations
 
 	u := prepareUserInfo(ctx)
 	if ctx.Written() {

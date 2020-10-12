@@ -118,5 +118,7 @@ func initBasicTasks() {
 	registerArchiveCleanup()
 	registerSyncExternalUsers()
 	registerDeletedBranchesCleanup()
-	registerUpdateMigrationPosterID()
+	if !setting.Repository.DisableMigrations {
+		registerUpdateMigrationPosterID()
+	}
 }
