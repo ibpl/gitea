@@ -132,6 +132,7 @@ func Dashboard(ctx *context.Context) {
 	// FIXME: update periodically
 	updateSystemStatus()
 	ctx.Data["SysStatus"] = sysStatus
+	ctx.Data["SSH"] = setting.SSH
 	ctx.HTML(200, tplDashboard)
 }
 

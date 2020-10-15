@@ -242,7 +242,7 @@ func EditUserPost(ctx *context.Context, form auth.AdminEditUserForm) {
 		}
 	}
 
-	if len(form.Password) > 0 {
+	if len(form.Password) > 0 && (u.IsLocal() || u.IsOAuth2()) {
 		var err error
 		// Don't allow password changes if local user management is disabled.
 		//if setting.Service.DisableLocalUserManagement {
