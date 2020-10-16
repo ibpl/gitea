@@ -315,6 +315,14 @@ func RegisterRoutes(m *macaron.Macaron) {
 		}
 	}
 
+	// webHooksEnabled requires web hooks to be enabled by admin.
+	webHooksEnabled := func(ctx *context.Context) {
+		if setting.DisableWebHooks {
+			ctx.Error(403)
+			return
+		}
+	}
+
 	m.Use(user.GetNotificationCount)
 	m.Use(func(ctx *context.Context) {
 		ctx.Data["UnitWikiGlobalDisabled"] = models.UnitTypeWiki.UnitGlobalDisabled()
@@ -534,7 +542,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 			m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 			m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 			m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-		})
+		}, webHooksEnabled)
 
 		m.Group("/auths", func() {
 			m.Get("", admin.Authentications)
@@ -639,7 +647,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 					m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 					m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 					m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-				})
+				}, webHooksEnabled)
 
 				m.Group("/labels", func() {
 					m.Get("", org.RetrieveLabels, org.Labels)
@@ -692,6 +700,12 @@ func RegisterRoutes(m *macaron.Macaron) {
 					Post(bindIgnErr(auth.ProtectBranchForm{}), context.RepoMustNotBeArchived(), repo.SettingsProtectedBranchPost)
 			}, repo.MustBeNotEmpty)
 
+			m.Group("/hooks/git", func() {
+				m.Get("", repo.GitHooks)
+				m.Combo("/:name").Get(repo.GitHooksEdit).
+					Post(repo.GitHooksEditPost)
+			}, context.GitHookService())
+
 			m.Group("/hooks", func() {
 				m.Get("", repo.Webhooks)
 				m.Post("/delete", repo.DeleteWebhook)
@@ -716,13 +730,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 				m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 				m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 				m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-
-				m.Group("/git", func() {
-					m.Get("", repo.GitHooks)
-					m.Combo("/:name").Get(repo.GitHooksEdit).
-						Post(repo.GitHooksEditPost)
-				}, context.GitHookService())
-			})
+			}, webHooksEnabled)
 
 			m.Group("/keys", func() {
 				m.Combo("").Get(repo.DeployKeys).
