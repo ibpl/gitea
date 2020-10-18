@@ -315,9 +315,9 @@ func RegisterRoutes(m *macaron.Macaron) {
 		}
 	}
 
-	// webHooksEnabled requires web hooks to be enabled by admin.
-	webHooksEnabled := func(ctx *context.Context) {
-		if setting.DisableWebHooks {
+	// webhooksEnabled requires webhooks to be enabled by admin.
+	webhooksEnabled := func(ctx *context.Context) {
+		if setting.DisableWebhooks {
 			ctx.Error(403)
 			return
 		}
@@ -542,7 +542,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 			m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 			m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 			m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-		}, webHooksEnabled)
+		}, webhooksEnabled)
 
 		m.Group("/auths", func() {
 			m.Get("", admin.Authentications)
@@ -647,7 +647,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 					m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 					m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 					m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-				}, webHooksEnabled)
+				}, webhooksEnabled)
 
 				m.Group("/labels", func() {
 					m.Get("", org.RetrieveLabels, org.Labels)
@@ -730,7 +730,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 				m.Post("/matrix/:id", bindIgnErr(auth.NewMatrixHookForm{}), repo.MatrixHooksEditPost)
 				m.Post("/msteams/:id", bindIgnErr(auth.NewMSTeamsHookForm{}), repo.MSTeamsHooksEditPost)
 				m.Post("/feishu/:id", bindIgnErr(auth.NewFeishuHookForm{}), repo.FeishuHooksEditPost)
-			}, webHooksEnabled)
+			}, webhooksEnabled)
 
 			m.Group("/keys", func() {
 				m.Combo("").Get(repo.DeployKeys).
