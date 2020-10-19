@@ -27,9 +27,11 @@
 		{{.i18n.Tr "admin.emails"}}
 	</a>
 {{end}}
+	{{if not DisableInternals}}
 	<a class="{{if .PageIsAdminConfig}}active{{end}} item" href="{{AppSubUrl}}/admin/config">
 		{{.i18n.Tr "admin.config"}}
 	</a>
+	{{end}}
 	<a class="{{if .PageIsAdminNotices}}active{{end}} item" href="{{AppSubUrl}}/admin/notices">
 		{{.i18n.Tr "admin.notices"}}
 	</a>

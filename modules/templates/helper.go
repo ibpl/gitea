@@ -240,6 +240,9 @@ func NewFuncMap() []template.FuncMap {
 		"Disable2FA": func() bool {
 			return setting.Disable2FA
 		},
+		"DisableInternals": func() bool {
+			return setting.DisableInternals
+		},
 		"TrN": TrN,
 		"Dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {

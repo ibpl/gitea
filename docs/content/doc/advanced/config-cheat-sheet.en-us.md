@@ -403,6 +403,7 @@ relation to port exhaustion.
    This maybe harmful to you website or your operating system.
 - `DISABLE_WEBHOOKS`: **false**: Set to `true` to disable webhooks feature.
 - `DISABLE_2FA`: **false**: Set to `true` to disable 2FA feature.
+- `DISABLE_INTERNALS`: **false**: Set to `true` to disable internal information and settings; currently Admin > Dashboard > Maintenance Operations (to avoid duplication with monitoring), System Status, Configuration tab, Monitoring > Queues.
 - `ONLY_ALLOW_PUSH_IF_GITEA_ENVIRONMENT_SET`: **true**: Set to `false` to allow local users to push to gitea-repositories without setting up the Gitea environment. This is not recommended and if you want local users to push to gitea repositories you should set the environment appropriately.
 - `IMPORT_LOCAL_PATHS`: **false**: Set to `false` to prevent all users (including admin) from importing local path on server.
 - `INTERNAL_TOKEN`: **\<random at every install if no uri set\>**: Secret used to validate communication within Gitea binary.

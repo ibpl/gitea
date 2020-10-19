@@ -154,6 +154,7 @@ var (
 	DisableGitHooks                    bool
 	DisableWebhooks                    bool
 	Disable2FA                         bool
+	DisableInternals                   bool
 	OnlyAllowPushIfGiteaEnvironmentSet bool
 	PasswordComplexity                 []string
 	PasswordHashAlgo                   string
@@ -774,6 +775,7 @@ func NewContext() {
 	DisableGitHooks = sec.Key("DISABLE_GIT_HOOKS").MustBool(true)
 	DisableWebhooks = sec.Key("DISABLE_WEBHOOKS").MustBool(false)
 	Disable2FA = sec.Key("DISABLE_2FA").MustBool(false)
+	DisableInternals = sec.Key("DISABLE_INTERNALS").MustBool(false)
 	OnlyAllowPushIfGiteaEnvironmentSet = sec.Key("ONLY_ALLOW_PUSH_IF_GITEA_ENVIRONMENT_SET").MustBool(true)
 	PasswordHashAlgo = sec.Key("PASSWORD_HASH_ALGO").MustString("argon2")
 	CSRFCookieHTTPOnly = sec.Key("CSRF_COOKIE_HTTP_ONLY").MustBool(true)
