@@ -36,7 +36,7 @@
 				</table>
 			</form>
 		</div>
-
+		{{if not DisableInternals}}
 		<h4 class="ui top attached header">
 			{{.i18n.Tr "admin.monitor.queues"}}
 		</h4>
@@ -64,7 +64,7 @@
 				</tbody>
 			</table>
 		</div>
-
+		{{end}}
 		<h4 class="ui top attached header">
 			{{.i18n.Tr "admin.monitor.process"}}
 		</h4>

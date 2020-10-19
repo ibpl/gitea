@@ -315,6 +315,14 @@ func RegisterRoutes(m *macaron.Macaron) {
 		}
 	}
 
+	// internalsEnabled requires internals to be enabled by admin.
+	internalsEnabled := func(ctx *context.Context) {
+		if setting.DisableInternals {
+			ctx.Error(403)
+			return
+		}
+	}
+
 	m.Use(user.GetNotificationCount)
 	m.Use(func(ctx *context.Context) {
 		ctx.Data["UnitWikiGlobalDisabled"] = models.UnitTypeWiki.UnitGlobalDisabled()
@@ -475,8 +483,10 @@ func RegisterRoutes(m *macaron.Macaron) {
 	m.Group("/admin", func() {
 		m.Get("", adminReq, admin.Dashboard)
 		m.Post("", adminReq, bindIgnErr(auth.AdminDashboardForm{}), admin.DashboardPost)
-		m.Get("/config", admin.Config)
-		m.Post("/config/test_mail", admin.SendTestMail)
+		m.Group("/config", func() {
+			m.Get("", admin.Config)
+			m.Post("/test_mail", admin.SendTestMail)
+		}, internalsEnabled)
 		m.Group("/monitor", func() {
 			m.Get("", admin.Monitor)
 			m.Post("/cancel/:pid", admin.MonitorCancel)
@@ -486,9 +496,8 @@ func RegisterRoutes(m *macaron.Macaron) {
 				m.Post("/add", admin.AddWorkers)
 				m.Post("/cancel/:pid", admin.WorkerCancel)
 				m.Post("/flush", admin.Flush)
-			})
+			}, internalsEnabled)
 		})
-
 		m.Group("/users", func() {
 			m.Get("", admin.Users)
 			m.Combo("/new").Get(admin.NewUser).Post(bindIgnErr(auth.AdminCreateUserForm{}), admin.NewUserPost)
