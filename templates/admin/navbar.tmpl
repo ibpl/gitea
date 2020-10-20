@@ -19,7 +19,7 @@
 		{{.i18n.Tr "admin.systemhooks"}}
 	</a>
 	{{end}}
-{{if not .DisableLocalUserManagement}}
+{{if not DisableLocalUserManagement}}
 	<a class="{{if .PageIsAdminAuthentications}}active{{end}} item" href="{{AppSubUrl}}/admin/auths">
 		{{.i18n.Tr "admin.authentication"}}
 	</a>

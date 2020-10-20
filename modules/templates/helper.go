@@ -243,6 +243,9 @@ func NewFuncMap() []template.FuncMap {
 		"DisableInternals": func() bool {
 			return setting.DisableInternals
 		},
+		"DisableLocalUserManagement": func() bool {
+			return setting.Service.DisableLocalUserManagement
+		},
 		"TrN": TrN,
 		"Dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {
