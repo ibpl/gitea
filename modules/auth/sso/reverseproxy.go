@@ -93,7 +93,7 @@ func (r *ReverseProxy) VerifyAuthData(ctx *macaron.Context, sess session.Store) 
 	// If the user does not have a locale set, we save the current one.
 	if len(user.Language) == 0 {
 		user.Language = ctx.Locale.Language()
-		if err = models.UpdateUserCols(user, "language"); err != nil {
+		if err = models.UpdateUserCols(user, false, "language"); err != nil {
 			log.Error(fmt.Sprintf("VerifyAuthData: error updating user language [user: %d, locale: %s]", user.ID, user.Language))
 		}
 	}
