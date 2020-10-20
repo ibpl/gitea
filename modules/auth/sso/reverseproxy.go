@@ -100,16 +100,20 @@ func (r *ReverseProxy) VerifyAuthData(ctx *macaron.Context, sess session.Store) 
 		}
 	}
 
-	// Initialize new session.
-	handleSignIn(ctx, sess, user)
+	// Make sure requests to API paths and PWA resources do not create a new session.
+	if !isAPIPath(ctx) && !isAttachmentDownload(ctx) {
 
-	user.SetLastLogin()
-	if err = models.UpdateUserCols(user, false, "last_login_unix"); err != nil {
-		log.Error(fmt.Sprintf("VerifyAuthData: error updating user last login time [user: %d]", user.ID))
+		// Initialize new session.
+		handleSignIn(ctx, sess, user)
+
+		user.SetLastLogin()
+		if err = models.UpdateUserCols(user, false, "last_login_unix"); err != nil {
+			log.Error(fmt.Sprintf("VerifyAuthData: error updating user last login time [user: %d]", user.ID))
+		}
+
+		// Redirect to self to update language.
+		ctx.Redirect(setting.AppSubURL + ctx.Req.URL.RequestURI())
 	}
-
-	// Redirect to self to apply user language using cookie.
-	ctx.Redirect(setting.AppSubURL + ctx.Req.URL.RequestURI())
 
 	return user
 }
