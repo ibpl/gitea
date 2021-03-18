@@ -21,7 +21,7 @@
 //     - text/html
 //
 //     Security:
-//     - BasicAuth :
+//     - BasicOrReverseProxyAuth :
 //     - Token :
 //     - AccessToken :
 //     - AuthorizationHeaderToken :
@@ -30,8 +30,9 @@
 //     - TOTPHeader :
 //
 //     SecurityDefinitions:
-//     BasicAuth:
-//          type: basic
+//     BasicOrReverseProxyAuth:
+//          type: basicOrReverseProxy
+//          description: Basic auth or rexerse proxy auth using HTTP header.
 //     Token:
 //          type: apiKey
 //          name: token
@@ -59,7 +60,7 @@
 //          type: apiKey
 //          name: X-GITEA-OTP
 //          in: header
-//          description: Must be used in combination with BasicAuth if two-factor authentication is enabled.
+//          description: Must be used in combination with BasicOrReverseProxyAuth if two-factor authentication is enabled.
 //
 // swagger:meta
 package v1
@@ -199,10 +200,13 @@ func reqToken() macaron.Handler {
 	}
 }
 
-func reqBasicAuth() macaron.Handler {
+func reqBasicOrRevProxyAuth() macaron.Handler {
 	return func(ctx *context.APIContext) {
+		if ctx.IsSigned && setting.Service.EnableReverseProxyAuth {
+			return
+		}
 		if !ctx.Context.IsBasicAuth {
-			ctx.Error(http.StatusUnauthorized, "reqBasicAuth", "basic auth required")
+			ctx.Error(http.StatusUnauthorized, "reqBasicOrRevProxyAuth", "auth required")
 			return
 		}
 		ctx.CheckForOTP()
@@ -553,7 +557,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 					m.Combo("").Get(user.ListAccessTokens).
 						Post(bind(api.CreateAccessTokenOption{}), user.CreateAccessToken)
 					m.Combo("/:id").Delete(user.DeleteAccessToken)
-				}, reqBasicAuth())
+				}, reqBasicOrRevProxyAuth())
 			})
 		})
 
